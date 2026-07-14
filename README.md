@@ -1,17 +1,30 @@
 # TV AutoBuild
 
-Public GitHub Actions builder for the maintained FongMi TV stack. It produces installable, consistently signed Mobile and Leanback release APKs from four source repositories.
+Public GitHub Actions release builder for the maintained FongMi TV stack. It produces installable, consistently signed Mobile and Leanback release APKs from two private application repositories and two public native/runtime source repositories.
 
 ## Monitored sources
 
-| Component | Branch | Build role |
-|---|---|---|
-| [iptvorganization/TV](https://github.com/iptvorganization/TV/tree/fongmi) | `fongmi` | Android application, Mobile/Leanback UI, subtitle runtime |
-| [iptvorganization/media](https://github.com/iptvorganization/media/tree/codec-support) | `codec-support` | Media3, AV3A renderer, Dolby Vision and HEVC-FLV |
-| [iptvorganization/VividLib](https://github.com/iptvorganization/VividLib) | `master` | AV3A/AVS3 native decoder source |
-| [iptvorganization/sherpa-onnx](https://github.com/iptvorganization/sherpa-onnx) | `master` | Java API and Android JNI speech runtime source |
+| Component | Visibility | Branch | Build role |
+|---|---|---|---|
+| [iptvorganization/TV](https://github.com/iptvorganization/TV/tree/fongmi) | Private | `fongmi` | Android application, Mobile/Leanback UI, subtitle runtime |
+| [iptvorganization/media](https://github.com/iptvorganization/media/tree/codec-support) | Private | `codec-support` | Media3, AV3A renderer, Dolby Vision and HEVC-FLV |
+| [iptvorganization/VividLib](https://github.com/iptvorganization/VividLib) | Public | `master` | AV3A/AVS3 native decoder source |
+| [iptvorganization/sherpa-onnx](https://github.com/iptvorganization/sherpa-onnx) | Public | `master` | Java API and Android JNI speech runtime source |
 
 The source list is machine-readable in [`config/sources.json`](config/sources.json).
+
+`TV` and `media` are independent private repositories rather than GitHub forks. Their links return `404` to visitors without repository access. `VividLib` and `sherpa-onnx` remain public dependency forks. This builder, its workflow history, signed APK releases, build manifests, and checksums remain public.
+
+## Private source access
+
+The default `GITHUB_TOKEN` issued to this public repository is scoped to `TV-AutoBuild` and cannot read the two private source repositories. Monitoring and checkout therefore require a separate Actions secret named `PRIVATE_SOURCE_TOKEN`.
+
+The token should be a fine-grained personal access token or GitHub App installation token with read-only **Contents** access to:
+
+- `iptvorganization/TV`
+- `iptvorganization/media`
+
+It does not need write access to either private repository. Signing keys, passwords, and the private-source token must remain in GitHub Actions secrets and must never be committed or printed in workflow logs.
 
 ## Monitoring behavior
 
